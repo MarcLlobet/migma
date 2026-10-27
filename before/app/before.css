@@ -1,0 +1,2 @@
+/* Production loads a 29 KB noise PNG as a CSS background. */
+body { background-image: url("/images/bg/noise.png"); }

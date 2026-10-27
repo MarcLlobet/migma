@@ -1,0 +1,17 @@
+{
+  "name": "migma-perf-prototype",
+  "private": true,
+  "workspaces": ["packages/*", "before", "after"],
+  "scripts": {
+    "dev:before": "npm run dev -w before",
+    "dev:after": "npm run dev -w after",
+    "build": "npm run build -w before && npm run build -w after",
+    "start:before": "npm run start -w before",
+    "start:after": "npm run start -w after",
+    "bench": "node bench/build.mjs && node bench/measure.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0",
+    "playwright": "^1.56.0"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "@migma-bench/ui",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./Home": "./Home.tsx",
+    "./content": "./content.ts",
+    "./styles.css": "./styles.css"
+  },
+  "peerDependencies": {
+    "react": ">=19"
+  }
+}
