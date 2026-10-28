@@ -116,7 +116,7 @@ for (const file of files) {
     checks.push({
       name: "caniemail",
       status: r.errors.length ? (config.failOn.caniemail ? "fail" : "warn") : r.warnings.length ? "warn" : "pass",
-      lines: [...r.errors.map((l) => `Not supported: ${l}`), ...r.warnings.map((l) => `Partial: ${l}`)],
+      lines: [...r.errors.map((l) => `Not supported: ${l}`), ...r.warnings.map((l) => `Warning: ${l}`)],
     });
   } catch (e) {
     checks.push({ name: "caniemail", status: "fail", lines: [`Checker crashed: ${e.message}`] });
