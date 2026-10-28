@@ -131,7 +131,7 @@ h1, h2, h3, p { margin: 0; }
 /* Scroll reveal with zero JavaScript (progressive enhancement) */
 @supports (animation-timeline: view()) {
   .reveal-css { animation: reveal linear both; animation-timeline: view(); animation-range: entry 0% entry 40%; }
-  @keyframes reveal { from { opacity: 0; transform: translateY(24px); } }
+  @keyframes reveal { from { transform: translateY(24px); } }
 }
 @media (prefers-reduced-motion: reduce) {
   .reveal-css { animation: none; }
