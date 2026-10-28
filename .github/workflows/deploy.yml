@@ -3,6 +3,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+    paths-ignore: ["emails/**", "email-check/**", ".github/workflows/email-check.yml"]
   workflow_dispatch:
 
 permissions:

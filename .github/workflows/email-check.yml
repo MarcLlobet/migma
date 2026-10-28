@@ -1,0 +1,25 @@
+name: Email checks
+
+on:
+  push:
+    paths: ["emails/**", "email-check/**", ".github/workflows/email-check.yml"]
+  pull_request:
+    paths: ["emails/**", "email-check/**", ".github/workflows/email-check.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: email-check
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install
+      - run: node check.mjs ../emails

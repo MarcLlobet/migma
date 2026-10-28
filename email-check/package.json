@@ -1,0 +1,17 @@
+{
+  "name": "email-check",
+  "private": true,
+  "type": "module",
+  "description": "Tests for HTML emails: client support (caniemail + doiuse-email), Gmail clipping and accessibility basics.",
+  "scripts": {
+    "check": "node check.mjs ../emails"
+  },
+  "engines": {
+    "node": ">=20.19"
+  },
+  "dependencies": {
+    "caniemail": "^2.0.2",
+    "doiuse-email": "^0.4.1",
+    "node-html-parser": "^7.0.1"
+  }
+}

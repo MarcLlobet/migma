@@ -1,0 +1,11 @@
+{
+  "clients": ["apple-mail.*", "gmail.*", "outlook.*", "yahoo.*"],
+  "gmailClipBytes": 102400,
+  "warnAtBytes": 92160,
+  "failOn": {
+    "caniemail": true,
+    "doiuse": false,
+    "size": true,
+    "accessibility": true
+  }
+}
