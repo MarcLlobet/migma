@@ -54,7 +54,6 @@ h1, h2, h3, p { margin: 0; }
 /* hero */
 .hero { position: relative; overflow: hidden; padding: 72px 0 120px; }
 .hero-inner { position: relative; text-align: center; max-width: 760px; }
-.hero-bg-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .9; }
 .hero-bg-css {
   position: absolute; inset: 0;
   background:
@@ -137,10 +136,3 @@ h1, h2, h3, p { margin: 0; }
   .reveal-css { animation: none; }
 }
 
-/* Header logo: still on load (keeps Speed Index honest), animates on hover/focus */
-.header-logo .lg-b { animation: lg-m 10.5s ease-in-out infinite alternate paused; transform-box: view-box; transform-origin: 45px 46px; }
-.header-logo .lg-b2 { animation-duration: 8s; animation-direction: alternate-reverse; }
-.header-logo .lg-b3 { animation-duration: 12s; animation-delay: -5s; }
-.brand:hover .header-logo .lg-b, .brand:focus-visible .header-logo .lg-b { animation-play-state: running; }
-@keyframes lg-m { 0% { transform: rotate(-20deg); } 35% { transform: rotate(40deg) translate(8px,-6px); } 70% { transform: rotate(110deg) translate(-6px,6px); } 100% { transform: rotate(160deg) translate(4px,-4px); } }
-@media (prefers-reduced-motion: reduce) { .header-logo .lg-b { animation: none; } }

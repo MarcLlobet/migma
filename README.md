@@ -10,8 +10,7 @@ A rebuild of the [migma.ai](https://migma.ai) homepage focused on mobile perform
 |---|---|---|
 | Rendering | Whole page hydrates as client JS | Server Components, static HTML; only the prompt box and mobile menu ship JS |
 | Hosting | Prerendered, but HTML not cached at the edge (`cf-cache-status: DYNAMIC`) | Static files on a CDN (GitHub Pages) |
-| Logo | Animated GIF, 651 KB, preloaded | Animated SVG, 2 KB |
-| Hero background | 111 KB WebP + 29 KB noise PNG | CSS gradients |
+| Hero background | 111 KB WebP + 29 KB noise PNG | CSS gradients (the image becomes the LCP element and cost a point in testing) |
 | Scroll reveals, tooltips | JavaScript | CSS scroll-driven animations, native `<details>` |
 | Third parties | ~25 tracking domains | None |
 
