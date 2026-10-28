@@ -5,8 +5,8 @@ import "./styles.css";
 export const metadata: Metadata = {
   title: "Migma homepage: performance prototype",
   description: "Performance prototype of the migma.ai homepage. Not the official site.",
-  // Keep this replica out of search results.
-  robots: { index: false, follow: false },
+  // Point search engines to the original page so this replica doesn't compete with it.
+  alternates: { canonical: "https://migma.ai/" },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

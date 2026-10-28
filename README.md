@@ -24,7 +24,7 @@ Run both on [PageSpeed Insights](https://pagespeed.web.dev), **Mobile** tab:
 
 Compare the **lab** section ("Diagnose performance issues"). The prototype has no real-user (field) data, and migma.ai's field data covers 28 days of real visits, so only lab vs lab is a fair comparison.
 
-**Caveats:** this is not a feature-complete copy. The gallery thumbnails and founders photo are CSS placeholders, the prompt doesn't do anything, and there are no analytics or ad pixels. It shows what the page *could* weigh, not a drop-in replacement. The SEO score will flag `noindex`, which is intentional so the replica stays out of search results.
+**Caveats:** this is not a feature-complete copy. The gallery thumbnails and founders photo are CSS placeholders, the prompt doesn't do anything, and there are no analytics or ad pixels. It shows what the page *could* weigh, not a drop-in replacement. The page is indexable but declares migma.ai as its canonical URL, so search engines treat the original as the main page.
 
 ## Run locally
 
