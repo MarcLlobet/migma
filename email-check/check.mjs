@@ -66,10 +66,23 @@ function entries(x) {
   return [];
 }
 
-// Returns { lines: {error, warning}, perClient: Map<client, "fail"|"warn"> }
+// Checked one client at a time: the caniemail library crashes on the whole
+// batch if a single client is missing data for a feature.
+// Returns { errors, warnings, skipped } and fills perClient: Map<client, "fail"|"warn">.
 function caniemailIssues(html, perClient) {
-  const result = caniemail({ clients: config.clients, html });
   const found = { error: new Map(), warning: new Map() };
+  const skipped = [];
+  for (const one of clientList) {
+    let result;
+    try { result = caniemail({ clients: [one], html }); }
+    catch { skipped.push(one); continue; }
+    collect(result, found, perClient);
+  }
+  const lines = (m) => [...m].map(([msg, clients]) => `${msg} (${[...clients].join(", ")})`);
+  return { errors: lines(found.error), warnings: lines(found.warning), skipped };
+}
+
+function collect(result, found, perClient) {
   for (const type of ["error", "warning"]) {
     const bucket = result.issues?.[`${type}s`] ?? result.issues?.[type];
     for (const [rawClient, list] of entries(bucket)) {
@@ -95,8 +108,6 @@ function caniemailIssues(html, perClient) {
       }
     }
   }
-  const lines = (m) => [...m].map(([msg, clients]) => `${msg} (${[...clients].join(", ")})`);
-  return { errors: lines(found.error), warnings: lines(found.warning) };
 }
 
 function doiuseIssues(html) {
@@ -118,6 +129,17 @@ function accessibility(html) {
 }
 
 // ---------- run ----------
+// Concrete client names (globs expanded), so caniemail can run per client.
+const FALLBACK_CLIENTS = [
+  "apple-mail.macos", "apple-mail.ios", "gmail.desktop-webmail", "gmail.ios", "gmail.android", "gmail.mobile-webmail",
+  "outlook.windows", "outlook.windows-mail", "outlook.macos", "outlook.ios", "outlook.android", "outlook.outlook-com",
+  "yahoo.desktop-webmail", "yahoo.ios", "yahoo.android", "aol.desktop-webmail", "aol.ios", "aol.android",
+  "samsung-email.android", "thunderbird.macos", "protonmail.desktop-webmail", "protonmail.ios", "protonmail.android",
+  "fastmail.desktop-webmail", "hey.desktop-webmail",
+];
+let clientList = await allClients();
+if (!clientList.length) clientList = FALLBACK_CLIENTS.filter((c) => config.clients.map(globRe).some((r) => r.test(c)));
+
 const files = await findHtml(dir).catch(() => []);
 if (!files.length) {
   console.log(`No .html emails found in ${dir}. Add exported emails there.`);
@@ -149,8 +171,13 @@ for (const file of files) {
     checks.push({
       name: "caniemail",
       status: r.errors.length ? (config.failOn.caniemail ? "fail" : "warn") : r.warnings.length ? "warn" : "pass",
-      lines: [...r.errors.map((l) => `Not supported: ${l}`), ...r.warnings.map((l) => `Warning: ${l}`)],
+      lines: [
+        ...r.errors.map((l) => `Not supported: ${l}`),
+        ...r.warnings.map((l) => `Warning: ${l}`),
+        ...(r.skipped.length ? [`Couldn't check (gap in caniemail data): ${r.skipped.join(", ")}`] : []),
+      ],
     });
+    for (const c of r.skipped) perClient.set(c, "skip");
   } catch (e) {
     checks.push({ name: "caniemail", status: "fail", lines: [`Checker crashed: ${e.message}`] });
   }
@@ -180,7 +207,7 @@ for (const file of files) {
 }
 
 // ---------- output ----------
-const icon = { pass: "✅", warn: "⚠️", fail: "❌" };
+const icon = { pass: "✅", warn: "⚠️", fail: "❌", skip: "➖" };
 
 for (const { rel, checks } of report) {
   console.log(`\n${rel}`);
@@ -204,11 +231,11 @@ if (process.env.GITHUB_STEP_SUMMARY) {
   }
 
   // Per-client table (caniemail): ✅ no issues, ⚠️ partial support, ❌ something not supported.
-  const listed = await allClients();
+  const listed = clientList;
   const seen = new Set(report.flatMap((r) => [...r.perClient.keys()]));
   const clients = [...new Set([...listed, ...seen])].sort();
   if (clients.length) {
-    md += `\n### By client\n\n✅ no issues · ⚠️ partial support · ❌ something not supported · **bold** = can fail the run\n\n`;
+    md += `\n### By client\n\n✅ no issues · ⚠️ partial support · ❌ something not supported · ➖ couldn't check · **bold** = can fail the run\n\n`;
     md += `| Client | ${report.map((r) => `\`${path.basename(r.rel)}\``).join(" | ")} |\n|---|${report.map(() => "---").join("|")}|\n`;
     for (const c of clients) {
       const name = isMajor(c) ? `**${c}**` : c;
