@@ -126,15 +126,13 @@ h1, h2, h3, p { margin: 0; }
 .footer ul { display: grid; gap: 8px; margin-top: 12px; color: #d4d4d8; font-size: 14px; }
 .footer-bottom { display: flex; align-items: center; gap: 12px; margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--line); }
 
-/* "before": CSS entrance animation on the hero subtitle, like the live site */
-.fade-in { animation: fade-in .8s ease-out .3s both; }
-@keyframes fade-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+.proto-banner { margin: 0; padding: 6px 16px; text-align: center; font-size: 12px; color: var(--muted); background: #18181b; border-bottom: 1px solid var(--line); }
 
-/* "after": scroll reveal with zero JavaScript (progressive enhancement) */
+/* Scroll reveal with zero JavaScript (progressive enhancement) */
 @supports (animation-timeline: view()) {
   .reveal-css { animation: reveal linear both; animation-timeline: view(); animation-range: entry 0% entry 40%; }
   @keyframes reveal { from { opacity: 0; transform: translateY(24px); } }
 }
 @media (prefers-reduced-motion: reduce) {
-  .fade-in, .reveal-css { animation: none; }
+  .reveal-css { animation: none; }
 }

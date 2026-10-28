@@ -1,63 +1,43 @@
 # Migma homepage: performance prototype
 
-Two Next.js versions of the [migma.ai](https://migma.ai) homepage with **identical layout and copy**, so the only differences are architectural:
+A rebuild of the [migma.ai](https://migma.ai) homepage focused on mobile performance. Same sections and copy as the live page; the reference to compare against is **migma.ai itself**.
 
-| | `before/` (as today) | `after/` (optimized) |
+**Live prototype:** https://marcllobet.github.io/migma/
+
+## What's different from migma.ai
+
+| | migma.ai (Oct 2026) | This prototype |
 |---|---|---|
-| Rendering | Prerendered, but one `"use client"` boundary at the top, so **the whole page hydrates** | **Server Components**; only the prompt box and mobile menu are client islands |
-| Logo | Animated GIF, ~650 KB, preloaded in `<head>` | Animated SVG, 2 KB |
-| Hero background | 111 KB WebP image + 29 KB noise PNG | CSS gradients |
-| Prompt placeholder | JS typewriter (React state every 40 ms) | Static placeholder |
-| Scroll reveals | JS (IntersectionObserver + state); sections are invisible until hydration | CSS scroll-driven animation, zero JS |
-| Info tooltips | React state | Native `<details>` |
+| Rendering | Whole page hydrates as client JS | Server Components, static HTML; only the prompt box and mobile menu ship JS |
+| Hosting | Prerendered, but HTML not cached at the edge (`cf-cache-status: DYNAMIC`) | Static files on a CDN (GitHub Pages) |
+| Logo | Animated GIF, 651 KB, preloaded | Animated SVG, 2 KB |
+| Hero background | 111 KB WebP + 29 KB noise PNG | CSS gradients |
+| Scroll reveals, tooltips | JavaScript | CSS scroll-driven animations, native `<details>` |
+| Third parties | ~25 tracking domains | None |
 
-Shared markup, styles and copy live in `packages/ui`.
+## Compare
 
-## Lab results
+Run both on [PageSpeed Insights](https://pagespeed.web.dev), **Mobile** tab:
 
-Mobile emulation: 412×823, 4× CPU slowdown, Slow 4G (150 ms RTT, 1.6 Mbps). Median of 5 runs.
+- https://pagespeed.web.dev/analysis?url=https://migma.ai/
+- https://pagespeed.web.dev/analysis?url=https://marcllobet.github.io/migma/
 
-| Metric | Before | After | Change |
-|---|---|---|---|
-| FCP | 608 ms | 572 ms | −6% |
-| LCP | 608 ms | 572 ms | −6% |
-| **Page fully loaded** | **4,595 ms** | **826 ms** | **−82%** |
-| Total Blocking Time | 48 ms | 60 ms | noise |
-| INP (lab estimate) | 56 ms | 56 ms | 0% |
-| **Transferred** | **864 KB** | **68 KB** | **−92%** |
-| …of which images | 793 KB | 1 KB | −100% |
+Compare the **lab** section ("Diagnose performance issues"). The prototype has no real-user (field) data, and migma.ai's field data covers 28 days of real visits, so only lab vs lab is a fair comparison.
 
-**Reading it:** the asset and rendering changes cut the download by 92% and make the page finish loading 5× faster on mobile data. First paint barely changes because both versions send prerendered HTML.
+**Caveats:** this is not a feature-complete copy. The gallery thumbnails and founders photo are CSS placeholders, the prompt doesn't do anything, and there are no analytics or ad pixels. It shows what the page *could* weigh, not a drop-in replacement. The SEO score will flag `noindex`, which is intentional so the replica stays out of search results.
 
-Interactivity is equal here because this replica ships only ~60 KB of JS. Production ships **~1.1 MB of first-party JS plus ~25 third-party tracking domains** (two session recorders, ad pixels), which this replica does not include. That is where the field INP of 833 ms comes from, so trimming JS and third parties is the next step after these changes. TTFB (1.8 s in the field) can't be measured locally either: it depends on caching the prerendered HTML at the Cloudflare edge.
-
-## Run the Next.js apps
+## Run locally
 
 ```bash
 npm install
-npm run build
-npm run start:before   # http://localhost:3001
-npm run start:after    # http://localhost:3002
+npm run dev      # http://localhost:3000
+npm run build    # static export in ./out
 ```
 
-To compare with PageSpeed Insights, deploy each folder as its own Vercel project (Root Directory: `before` or `after`) and run both URLs on [pagespeed.web.dev](https://pagespeed.web.dev) with the Mobile tab.
+## Deploy
 
-## Re-run the lab benchmark
-
-The benchmark builds both pages the way Next ships them (prerendered HTML + full-page hydration vs. island hydration) with esbuild and React's server renderer, then measures them in throttled Chromium.
-
-```bash
-npm install
-npx playwright install chromium
-npm run bench            # writes bench/results/results.md
-```
-
-Caveats: real Next.js adds its router runtime to both versions and inlines an RSC payload in the HTML (slightly larger for `after`). The lab numbers are for comparing the two approaches, not a prediction of PageSpeed scores.
-
-## Assets
-
-`before/public/images/*` are generated stand-ins matched to production's format, dimensions and byte weight (`python3 scripts/make-assets.py`). No production files are copied. Gallery thumbnails and the founders photo are CSS placeholders in both versions.
+Pushing to `main` runs `.github/workflows/deploy.yml`, which builds the static export and publishes it to GitHub Pages.
 
 ---
 
-Performance prototype prepared for Migma. Not the production site; pages are set to `noindex`.
+Performance prototype prepared for Migma. Not the official site.

@@ -1,27 +1,22 @@
-import type { ComponentType, ReactNode } from "react";
 import {
   campaign, comparison, cta, footer, founders, gallery, hero, integrations,
   meet, nav, sameTeam, trusted,
-} from "./content";
+} from "../content";
+import { SvgLogo as Logo } from "./SvgLogo";
+import { PromptBox } from "./PromptBox";
+import { MenuToggle } from "./MenuToggle";
+import { Reveal } from "./Reveal";
+import { Info } from "./Info";
 
 /**
- * The whole homepage markup, shared by both apps.
- * Everything that differs between "before" and "after" is injected as a slot,
- * so the comparison isolates architecture, not layout or copy.
+ * The whole homepage, as a Server Component.
+ * Only PromptBox and MenuToggle are client components ("use client");
+ * everything else ships as HTML with no JavaScript to hydrate.
  */
-export type Slots = {
-  Logo: ComponentType<{ size: number }>;
-  HeroBackground: ReactNode;
-  Prompt: ReactNode;
-  MenuButton: ReactNode;
-  Reveal: ComponentType<{ children: ReactNode; className?: string }>;
-  Info: ComponentType<{ title: string; text: string }>;
-  subtitleClassName?: string;
-};
-
-export function Home({ Logo, HeroBackground, Prompt, MenuButton, Reveal, Info, subtitleClassName = "" }: Slots) {
+export function Home() {
   return (
     <>
+      <p className="proto-banner">Performance prototype of migma.ai. Not the official site.</p>
       <header className="header">
         <a href="#" className="brand" aria-label="Migma home">
           <Logo size={31} />
@@ -33,19 +28,19 @@ export function Home({ Logo, HeroBackground, Prompt, MenuButton, Reveal, Info, s
         <div className="header-actions">
           <a href="#" className="link-muted hide-mobile">Sign In</a>
           <a href="#" className="btn btn-light btn-sm">Get started</a>
-          {MenuButton}
+          <MenuToggle />
         </div>
       </header>
 
       <main>
         <section className="hero">
-          {HeroBackground}
+          <div className="hero-bg-css" aria-hidden="true" />
           <div className="container hero-inner">
             <h1 className="display hero-title">
               {hero.title[0]} <span className="grad">{hero.title[1]}</span>
             </h1>
-            <p className={`hero-subtitle ${subtitleClassName}`}>{hero.subtitle}</p>
-            {Prompt}
+            <p className="hero-subtitle">{hero.subtitle}</p>
+            <PromptBox />
             <div className="imports">
               <p className="muted small">Already have a design?</p>
               <h2 className="sr-only">Suggested Chat Messages</h2>

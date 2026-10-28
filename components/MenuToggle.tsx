@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { nav } from "@migma-bench/ui/content";
+import { nav } from "../content";
 
 export function MenuToggle() {
   const [open, setOpen] = useState(false);

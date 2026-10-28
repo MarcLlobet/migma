@@ -1,5 +1,5 @@
 // Homepage copy, mirrored from migma.ai (Oct 27, 2026) for a performance prototype.
-// Kept identical across the "before" and "after" apps so only the architecture differs.
+// Text only; layout and styles live in components/Home.tsx and app/styles.css.
 
 export const nav = ["Solutions", "Resources", "Agents", "Pricing"];
 

@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import "@migma-bench/ui/styles.css";
+import "./styles.css";
 
 export const metadata: Metadata = {
-  title: "Migma (after): performance prototype",
+  title: "Migma homepage: performance prototype",
+  description: "Performance prototype of the migma.ai homepage. Not the official site.",
+  // Keep this replica out of search results.
   robots: { index: false, follow: false },
 };
 

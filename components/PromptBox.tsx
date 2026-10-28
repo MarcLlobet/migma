@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { hero } from "@migma-bench/ui/content";
+import { hero } from "../content";
 
 // Client island: only the interactive prompt hydrates.
 // Static placeholder instead of a 40 ms typewriter loop.
