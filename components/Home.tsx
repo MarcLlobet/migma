@@ -3,6 +3,7 @@ import {
   meet, nav, sameTeam, trusted,
 } from "../content";
 import { SvgLogo as Logo } from "./SvgLogo";
+import { HeaderLogo } from "./HeaderLogo";
 import { PromptBox } from "./PromptBox";
 import { MenuToggle } from "./MenuToggle";
 import { Reveal } from "./Reveal";
@@ -19,7 +20,7 @@ export function Home() {
       <p className="proto-banner">Performance prototype of migma.ai. Not the official site.</p>
       <header className="header">
         <a href="#" className="brand" aria-label="Migma home">
-          <Logo size={31} />
+          <HeaderLogo size={31} />
           <span className="wordmark">Migma</span>
         </a>
         <nav className="nav" aria-label="Main">
