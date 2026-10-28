@@ -2,12 +2,16 @@ import {
   campaign, comparison, cta, footer, founders, gallery, hero, integrations,
   meet, nav, sameTeam, trusted,
 } from "../content";
-import { SvgLogo as Logo } from "./SvgLogo";
+import { SvgLogo } from "./SvgLogo";
 import { HeaderLogo } from "./HeaderLogo";
 import { PromptBox } from "./PromptBox";
 import { MenuToggle } from "./MenuToggle";
 import { Reveal } from "./Reveal";
 import { Info } from "./Info";
+import { gifLogo, imageHero, base } from "./variant";
+
+const GifLogo = ({ size }: { size: number }) => <img src={`${base}/images/MigmaAI.gif`} width={size} height={size} alt="Migma" />;
+const Logo = gifLogo ? GifLogo : SvgLogo;
 
 /**
  * The whole homepage, as a Server Component.
@@ -20,7 +24,7 @@ export function Home() {
       <p className="proto-banner">Performance prototype of migma.ai. Not the official site.</p>
       <header className="header">
         <a href="#" className="brand" aria-label="Migma home">
-          <HeaderLogo size={31} />
+          {gifLogo ? <GifLogo size={31} /> : <HeaderLogo size={31} />}
           <span className="wordmark">Migma</span>
         </a>
         <nav className="nav" aria-label="Main">
@@ -35,7 +39,9 @@ export function Home() {
 
       <main>
         <section className="hero">
-          <div className="hero-bg-css" aria-hidden="true" />
+          {imageHero
+            ? <img className="hero-bg-img" src={`${base}/images/bg/MigmaMobile.webp`} alt="" />
+            : <div className="hero-bg-css" aria-hidden="true" />}
           <div className="container hero-inner">
             <h1 className="display hero-title">
               {hero.title[0]} <span className="grad">{hero.title[1]}</span>
