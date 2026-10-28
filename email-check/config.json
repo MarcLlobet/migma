@@ -2,6 +2,7 @@
   "clients": ["apple-mail.*", "gmail.*", "outlook.*", "yahoo.*"],
   "gmailClipBytes": 102400,
   "warnAtBytes": 92160,
+  "warnOnly": ["`<body> element`", "`role attribute`"],
   "failOn": {
     "caniemail": true,
     "doiuse": false,

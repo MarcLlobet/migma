@@ -11,6 +11,8 @@ Tests for HTML emails. Put exported emails in [`/emails`](../emails); every push
 
 Settings live in [`config.json`](config.json): clients to test (Apple Mail, Gmail, Outlook, Yahoo by default), size limits, and which checks fail the run.
 
+`warnOnly` lists features some clients strip without breaking the email (`<body>`, `role`). They're still reported, as warnings: for example, styles on `<body>` are lost in those clients, so put backgrounds on a wrapper table too.
+
 Results appear in the run's **Summary** tab, and as annotations on the files.
 
 ## Run locally

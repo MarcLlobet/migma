@@ -52,9 +52,14 @@ function caniemailIssues(html) {
         try { message = formatIssue({ client, issue, issueType: type }).message; }
         catch { message = issue?.title ?? JSON.stringify(issue).slice(0, 160); }
         // Group identical messages across clients.
-        const key = message.replace(new RegExp(String(client).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g"), "").trim();
-        if (!found[type].has(key)) found[type].set(key, new Set());
-        found[type].get(key).add(String(client));
+        const key = message
+          .replace(new RegExp(String(client).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g"), "")
+          .replace(/\s*(?:by|for|on|in)\s*``\.?/g, "")
+          .trim();
+        // Features that clients strip harmlessly (see config.warnOnly) never fail the run.
+        const t = type === "error" && config.warnOnly?.some((f) => key.includes(f)) ? "warning" : type;
+        if (!found[t].has(key)) found[t].set(key, new Set());
+        found[t].get(key).add(String(client));
       }
     }
   }
