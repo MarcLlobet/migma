@@ -17,6 +17,10 @@ const meta = JSON.parse(await readFile(path.join(src, "meta.json"), "utf8"));
 let html = await readFile(path.join(src, "body.html"), "utf8");
 let css = await readFile(path.join(src, "styles.css"), "utf8");
 
+// ---------- remove runtime-only elements ----------
+// Seasonal "send" effect injected by JS (frozen at its capture position, it stretches the page).
+html = html.replace(/<span[^>]*halloween-send-effect[^>]*>[\s\S]*?<\/span>/g, "");
+
 // ---------- asset URL → local file ----------
 const assets = {}; // absolute URL → path relative to public/
 function localPath(abs) {

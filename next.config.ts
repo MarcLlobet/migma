@@ -9,8 +9,6 @@ const config: NextConfig = {
   basePath,
   trailingSlash: true,
   images: { unoptimized: true },
-  // Inline the CSS into the HTML so it doesn't block first paint.
-  experimental: { inlineCss: true },
   env: { NEXT_PUBLIC_BASE_PATH: basePath },
 };
 
