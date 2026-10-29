@@ -15,11 +15,10 @@ const GROUPS: [string, [string, string][]][] = [
 function buildPanel() {
   const panel = document.createElement("nav");
   panel.setAttribute("aria-label", "Menu");
-  panel.hidden = true;
   Object.assign(panel.style, {
     position: "fixed", top: "64px", left: "12px", right: "12px", zIndex: "60", maxWidth: "420px", marginLeft: "auto",
     padding: "16px", borderRadius: "20px", background: "#18181b", border: "1px solid #3f3f46",
-    boxShadow: "0 20px 60px rgba(0,0,0,.5)", display: "grid", gap: "16px", font: "15px/1.4 system-ui, sans-serif",
+    boxShadow: "0 20px 60px rgba(0,0,0,.5)", display: "none", gap: "16px", font: "15px/1.4 system-ui, sans-serif",
   });
   for (const [title, links] of GROUPS) {
     const g = document.createElement("div");
@@ -43,11 +42,13 @@ export function Enhance() {
     const triggers = [...document.querySelectorAll<HTMLButtonElement>("header button, nav button, button")].filter((b) =>
       ["Open menu", "Solutions", "Resources", "Agents"].includes(b.textContent?.trim() ?? ""),
     );
+    let isOpen = false;
     const setOpen = (open: boolean) => {
-      panel.hidden = !open;
+      isOpen = open;
+      panel.style.display = open ? "grid" : "none";
       triggers.forEach((t) => t.setAttribute("aria-expanded", String(open)));
     };
-    const toggle = (e: Event) => { e.stopPropagation(); setOpen(panel.hidden); };
+    const toggle = (e: Event) => { e.stopPropagation(); setOpen(!isOpen); };
     triggers.forEach((t) => t.addEventListener("click", toggle));
     const close = (e: Event) => {
       if (e instanceof KeyboardEvent && e.key !== "Escape") return;
