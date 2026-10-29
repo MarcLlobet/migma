@@ -2,7 +2,7 @@
 
 Two pieces of work on [migma.ai](https://migma.ai), done from the outside (no access to Migma's code):
 
-1. **[Homepage performance](#1-homepage-performance):** the homepage rebuilt to score 100 on PageSpeed.
+1. **[Homepage performance](#1-homepage-performance):** the same homepage, 1:1, scoring 97 on mobile instead of 57.
 2. **[Email checks](#2-email-checks):** automated tests for HTML emails across ~50 email clients.
 3. **[Accessibility audit](#3-accessibility-audit):** what Lighthouse's 100 misses on migma.ai, and a plan.
 
@@ -12,31 +12,41 @@ Two pieces of work on [migma.ai](https://migma.ai), done from the outside (no ac
 
 **Live:** https://marcllobet.github.io/migma/
 
-| PageSpeed | migma.ai (mobile) | This prototype (mobile + desktop) |
+A 1:1 copy of the migma.ai homepage: the **same markup, CSS, fonts and images**, captured from the live site. Only the delivery changes. Every section sits at the same pixel position as on migma.ai.
+
+| PageSpeed | migma.ai | Prototype |
 |---|---|---|
-| Performance | 57 | **100** |
+| Performance (mobile) | 57 | **97** |
+| Performance (desktop) | | **99** |
 | Accessibility | 100 | **100** |
 | Best practices | 96 | **100** |
 | SEO | 100 | **100** |
 
-Reports: [migma.ai](https://pagespeed.web.dev/analysis/https-migma-ai/58nlx7boi8?form_factor=mobile) · [prototype](https://pagespeed.web.dev/analysis/https-marcllobet-github-io-migma/snpw4mjndt)
+Reports: [migma.ai](https://pagespeed.web.dev/analysis/https-migma-ai/58nlx7boi8?form_factor=mobile) · [prototype](https://pagespeed.web.dev/analysis/https-marcllobet-github-io-migma/cgp8vxxc8o?form_factor=mobile)
 
-### Changes
+### Changes, step by step (mobile score)
 
-Only changes that moved the score were kept. Each was tested on its own.
+| Step | Change | Score | Code |
+|---|---|---|---|
+| — | migma.ai today | 57 | |
+| 1 | Static HTML on a CDN, CSS trimmed to the rules used (430 → 99 KB) and inlined | 74 | [build.mjs](scripts/snapshot/build.mjs) |
+| 2 | Logo as animated AVIF instead of GIF (651 → 52 KB, same look) | 90 | [optimize-logo.sh](scripts/snapshot/optimize-logo.sh) |
+| 3 | No framework JS in the browser: the page needs no React, so Next's runtime and its second copy of the page (230 KB) are removed; menu + Send are 2 KB of plain JS | **97** | [strip-next-runtime.mjs](scripts/strip-next-runtime.mjs) · [enhance.js](public/enhance.js) |
 
-| Change | migma.ai → prototype | Code |
-|---|---|---|
-| Server Components | Whole page hydrates as JS → only the prompt box and menu ship JS | [Home.tsx](components/Home.tsx) |
-| Cached HTML | Rendered per visit (`cf-cache-status: DYNAMIC`) → static files on a CDN | [next.config.ts](next.config.ts) |
-| Inline CSS | Render-blocking stylesheet → CSS inside the HTML | [next.config.ts](next.config.ts) |
-| CSS hero | Background image (became the LCP) → CSS gradient | [styles.css](app/styles.css) |
-| No hero fade-in | Main text fades in → shows immediately | [styles.css](app/styles.css) |
-| No-JS extras | JS scroll reveals and tooltips → CSS animations and `<details>` | [Reveal.tsx](components/Reveal.tsx) · [Info.tsx](components/Info.tsx) |
+Desktop went from 84 to 99 with step 3, which removed 280 ms of blocking time.
 
-**Tested and not changed:** the GIF logo. Replacing it with a 2 KB SVG saves 649 KB, but the score stayed the same.
+### How the copy is made
 
-**Caveats:** placeholder images, the prompt doesn't work, and there are no analytics or ad pixels. On migma.ai, trackers should load later, not be removed. The page declares migma.ai as its canonical URL so it doesn't compete in search.
+1. **Capture** the rendered page in a browser: markup, CSS (unused rules removed), asset list → [`snapshot/source`](snapshot/source).
+2. **Build** ([build.mjs](scripts/snapshot/build.mjs)): asset URLs → local files, links → the real migma.ai.
+3. **Download assets** with the [Download snapshot assets](.github/workflows/snapshot-assets.yml) workflow → [`public/snap`](public/snap).
+4. **Render** with Next.js at build time ([page.tsx](app/page.tsx)), then strip the client runtime.
+
+**Caveats:**
+- **Snapshot date:** Oct 29, 2026. It doesn't update with migma.ai.
+- **Interactions:** the menu is a simplified panel, and the "Meet MigmaAI" tabs and feature pop-ups are static. Send and all links go to migma.ai.
+- **Trackers:** none. On migma.ai they should load later, not be removed.
+- **Visibility:** the page declares migma.ai as its canonical URL so it doesn't compete in search.
 
 ### Run
 
@@ -117,7 +127,8 @@ Limits: homepage only, tested in Chrome. A VoiceOver/NVDA pass would confirm #3,
 ## Structure
 
 ```
-app/, components/, content.ts   Homepage prototype (Next.js)
+app/, lib/, public/             Homepage prototype (Next.js, static export)
+snapshot/, scripts/snapshot/    Captured migma.ai page + build scripts
 email-check/                    Email test runner + config
 emails/                         Emails to test
 .github/workflows/              Deploy + email checks
