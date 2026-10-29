@@ -1,0 +1,26 @@
+name: Download snapshot assets
+
+# One-off: downloads the images and fonts used by the migma.ai snapshot
+# into public/snap and commits them. Run it from the Actions tab.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - run: node scripts/snapshot/fetch-assets.mjs
+      - name: Commit assets
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/snap
+          git diff --cached --quiet || git commit -m "Add migma.ai snapshot assets"
+          git push
