@@ -79,6 +79,12 @@ css = css.replace(/url\(["']?([^)"']+)["']?\)/g, (m, v) => {
   return l ? `url("${l}")` : m;
 });
 
+// ---------- performance changes that keep the design identical ----------
+// Logo: serve the ~50 KB animated AVIF (scripts/snapshot/optimize-logo.sh) instead of
+// the 651 KB GIF; browsers without AVIF still get the GIF. display:contents keeps layout.
+html = html.replace(/<img([^>]*?)src="__BASE__\/snap\/images\/MigmaAI\.gif"([^>]*)>/g,
+  '<picture style="display:contents"><source srcset="__BASE__/snap/images/MigmaAI.avif" type="image/avif"><img$1src="__BASE__/snap/images/MigmaAI.gif"$2></picture>');
+
 // Any asset URL left un-rewritten?
 const leftovers = [...html.matchAll(/(?:src|srcset)="([^"]*(?:\/_next\/image|cdn\.migma\.ai|^\/images)[^"]*)"/g)].map((m) => m[1]);
 
