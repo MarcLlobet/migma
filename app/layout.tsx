@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { fontUrl, snapshotCss, snapshotMeta } from "../lib/snapshot";
+import { base, fontUrl, snapshotCss, snapshotMeta } from "../lib/snapshot";
 
 export const metadata: Metadata = {
   title: snapshotMeta.title,
@@ -18,6 +18,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <link rel="preload" as="font" type="font/woff2" href={fontUrl} crossOrigin="" />
         {/* migma.ai's CSS, trimmed to the rules this page uses, inlined so it doesn't block rendering */}
         <style dangerouslySetInnerHTML={{ __html: snapshotCss }} />
+        <script src={`${base}/enhance.js`} defer data-keep="" />
       </head>
       <body className={snapshotMeta.bodyClass}>{children}</body>
     </html>

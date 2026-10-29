@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && node scripts/strip-next-runtime.mjs",
     "start": "npx serve out"
   },
   "dependencies": {

@@ -1,8 +1,8 @@
 import { snapshotHtml } from "../lib/snapshot";
-import { Enhance } from "../components/Enhance";
 
 // Same markup, CSS and images as migma.ai (captured Oct 29, 2026), served as
-// static HTML. The only client JavaScript is <Enhance />: menu and prompt.
+// static HTML. No framework JS runs in the browser (see scripts/strip-next-runtime.mjs);
+// the menu and the prompt's Send action come from public/enhance.js.
 export default function Page() {
   return (
     <>
@@ -16,7 +16,6 @@ export default function Page() {
       >
         Performance prototype of migma.ai · not the official site
       </p>
-      <Enhance />
     </>
   );
 }
