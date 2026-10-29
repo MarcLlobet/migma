@@ -4,6 +4,7 @@ Two pieces of work on [migma.ai](https://migma.ai), done from the outside (no ac
 
 1. **[Homepage performance](#1-homepage-performance):** the homepage rebuilt to score 100 on PageSpeed.
 2. **[Email checks](#2-email-checks):** automated tests for HTML emails across ~50 email clients.
+3. **[Accessibility audit](#3-accessibility-audit):** what Lighthouse's 100 misses on migma.ai, and a plan.
 
 ---
 
@@ -81,6 +82,35 @@ cd email-check
 npm install
 node check.mjs ../emails
 ```
+
+---
+
+## 3. Accessibility audit
+
+migma.ai scores 100 for accessibility on Lighthouse, but Lighthouse runs only a few automated checks. Audit of the homepage (Oct 29, 2026) with the full [axe-core](https://github.com/dequelabs/axe-core) rule set, real keyboard navigation, and motion/target checks:
+
+| # | Issue | Evidence | WCAG |
+|---|---|---|---|
+| 1 | Keyboard focus invisible on many elements | 1.5 px dark-grey outline on near-black (≈1.6:1). The menu button's 3 px light ring is fine. | 2.4.7, 1.4.11 |
+| 2 | Logo animates nonstop, can't be paused | 3 looping GIFs; GIFs ignore "reduce motion" | 2.2.2 |
+| 3 | Two `<main>` regions, one nested | axe: `landmark-no-duplicate-main` | 2.4.1 |
+| 4 | No "Skip to content" link | 77 focusable elements before/around content | 2.4.1 |
+| 5 | Small tap targets | Gallery brand buttons are 16 px tall | 2.5.8 |
+| 6 | Contrast on gradients unverified | 25 text elements over gradients/images | 1.4.3 |
+| 7 | Prompt hint not announced | Rotating example text is visual only | Minor |
+
+**Already good:** the comparison table's ✓/× have screen-reader text, the prompt is a labeled text box, headings are in order, and the page language is set.
+
+### Plan
+
+| When | Do |
+|---|---|
+| **Quick (~1 day)** | One visible `:focus-visible` ring everywhere · fix the nested `<main>` · add a skip link · logo motion that stops under `prefers-reduced-motion` |
+| **Next (~1 week)** | Check text-on-gradient contrast by hand · targets ≥ 24×24 px · verify looping animations stop with "reduce motion" · `aria-placeholder` on the prompt |
+| **Keep it fixed** | axe in CI on every pull request · a keyboard + screen reader + 200% zoom pass per release |
+| **Beyond the homepage** | Audit the editor (keyboard, screen reader) · AI-written alt text and plain-text versions for generated emails |
+
+Limits: homepage only, tested in Chrome. A VoiceOver/NVDA pass would confirm #3, #4 and #7.
 
 ---
 
